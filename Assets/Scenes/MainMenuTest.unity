@@ -1542,7 +1542,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bac7fa7cc652211449049c35b28c34a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuUI
-  relay: {fileID: 0}
+  relay: {fileID: 1368949391}
   hostButton: {fileID: 1799365852}
   joinButton: {fileID: 1418694597}
   joinSection: {fileID: 599602236}
