@@ -10,6 +10,9 @@ using Unity.Services.Authentication;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 
+/// <summary>
+/// NO IDEA HOW THIS WORKS!!! 
+/// </summary>
 public class RelayConnector : MonoBehaviour
 {
     [Header("NGO")]
