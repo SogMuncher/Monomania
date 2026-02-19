@@ -9,8 +9,8 @@ using Unity.Services.Authentication;
 
 public class MainMenuUI : MonoBehaviour
 {
-    // Panels for the two menus
     [Header("Menus")]
+    [SerializeField] private GameObject corePanel;
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject lobbyPanel;
 
@@ -126,8 +126,8 @@ public class MainMenuUI : MonoBehaviour
     // If the session manager exists, start listening for player list changes
     private void BindSessionManager()
     {
-        sessionManager = SessionManager.instance != null
-            ? SessionManager.instance
+        sessionManager = SessionManager.Instance != null
+            ? SessionManager.Instance
             : FindFirstObjectByType<SessionManager>();
 
         if (sessionManager == null)
@@ -137,15 +137,15 @@ public class MainMenuUI : MonoBehaviour
         }
 
         // Defensive: avoid double-subscribe
-        sessionManager.players.OnListChanged -= OnPlayersChanged;
-        sessionManager.players.OnListChanged += OnPlayersChanged;
+        sessionManager.Players.OnListChanged -= OnPlayersChanged;
+        sessionManager.Players.OnListChanged += OnPlayersChanged;
     }
     //stop listening for player list changes
     private void UnbindSessionManager()
     {
         if (sessionManager != null)
         {
-            sessionManager.players.OnListChanged -= OnPlayersChanged;
+            sessionManager.Players.OnListChanged -= OnPlayersChanged;
         }
     }
     //when the player network list changes, we rebuild the UI element
@@ -173,10 +173,10 @@ public class MainMenuUI : MonoBehaviour
         ulong hostId = NetworkManager.ServerClientId;
 
         // Copy then sort host first
-        var players = new List<PlayerData>(sessionManager.players.Count);
-        for (int i = 0; i < sessionManager.players.Count; i++)
+        var players = new List<PlayerData>(sessionManager.Players.Count);
+        for (int i = 0; i < sessionManager.Players.Count; i++)
         {
-            players.Add(sessionManager.players[i]);
+            players.Add(sessionManager.Players[i]);
         }
         players.Sort((a, b) =>
         {
@@ -226,8 +226,11 @@ public class MainMenuUI : MonoBehaviour
 
         SetStatus("Status: Starting game...");
 
-        //TODO. Make sure the session manager is preserved!
-        NetworkManager.Singleton.SceneManager.LoadScene(gameplaySceneName, LoadSceneMode.Single);
+        // IMPORTANT: Session Manager should always be loaded
+        NetworkManager.Singleton.SceneManager.LoadScene(gameplaySceneName, LoadSceneMode.Additive);
+
+        //TEST
+        corePanel.SetActive(false);
     }
 
     // Handles return button. If we connected to relay, disconnect

@@ -34,38 +34,38 @@ public struct PlayerData : INetworkSerializable, IEquatable<PlayerData>
 //Stores session related information. For now just stores a list of active players in the scene.
 public class SessionManager : NetworkBehaviour
 {
-    public static SessionManager instance { get; private set; }
-    public NetworkList<PlayerData> players { get; private set; }
+    public static SessionManager Instance { get; private set; }
+    public NetworkList<PlayerData> Players { get; private set; }
 
     private void Awake()
     {
-        instance = this;
-        players = new NetworkList<PlayerData>();
+        Instance = this;
+        Players = new NetworkList<PlayerData>();
     }
     //Add player to the network list when they connect
     public void AddPlayer(ulong clientID)
     {
         if (!IsServer) return;
         string playerName = clientID == NetworkManager.ServerClientId ? "Host" : $"Player:{clientID}";
-        for (int i = 0; i < players.Count; i++)
+        for (int i = 0; i < Players.Count; i++)
         {
-            if (players[i].clientID == clientID)
+            if (Players[i].clientID == clientID)
             {
                 return;
             }
         }
-        players.Add(new PlayerData(clientID, playerName));
+        Players.Add(new PlayerData(clientID, playerName));
         Debug.Log($"[Lobby] Added Player: {clientID}");
     }
     //remove player from the network list when they disconnect
     public void RemovePlayer(ulong clientID)
     {
         if (!IsServer) return;
-        for (int i = players.Count - 1; i >= 0; i--)
+        for (int i = Players.Count - 1; i >= 0; i--)
         {
-            if (players[i].clientID == clientID)
+            if (Players[i].clientID == clientID)
             {
-                players.RemoveAt(i);
+                Players.RemoveAt(i);
                 Debug.Log($"[Lobby] Removed Player: {clientID}");
                 return;
             }
@@ -82,7 +82,7 @@ public class SessionManager : NetworkBehaviour
             // Add host (server) immediately
             AddPlayer(NetworkManager.ServerClientId);
         }
-        players.OnListChanged += change => Debug.Log($"Players changed: {players.Count}");
+        Players.OnListChanged += change => Debug.Log($"Players changed: {Players.Count}");
     }
 
     public override void OnNetworkDespawn()
@@ -93,7 +93,7 @@ public class SessionManager : NetworkBehaviour
             NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
         }
 
-        if (instance == this) instance = null;
+        if (Instance == this) Instance = null;
     }
 
     private void OnClientConnected(ulong clientId)
