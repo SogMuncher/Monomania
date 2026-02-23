@@ -284,7 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bac7fa7cc652211449049c35b28c34a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuUI
-  corePanel: {fileID: 0}
+  corePanel: {fileID: 698143991}
   mainMenuPanel: {fileID: 756892518}
   lobbyPanel: {fileID: 145776528}
   relay: {fileID: 101270921}

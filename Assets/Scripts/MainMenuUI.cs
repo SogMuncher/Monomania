@@ -9,6 +9,8 @@ using Unity.Services.Authentication;
 
 public class MainMenuUI : MonoBehaviour
 {
+    public event Action<bool> OnMenuVisibilityChanged;
+
     [Header("Menus")]
     [SerializeField] private GameObject corePanel;
     [SerializeField] private GameObject mainMenuPanel;
@@ -226,11 +228,11 @@ public class MainMenuUI : MonoBehaviour
 
         SetStatus("Status: Starting game...");
 
+        // TODO: make this fire an event so all clients hide their menus, the event can be invoked when the player presses the menu button as well (hambuger menu in corner)
+        corePanel.SetActive(false);
+
         // IMPORTANT: Session Manager should always be loaded
         NetworkManager.Singleton.SceneManager.LoadScene(gameplaySceneName, LoadSceneMode.Additive);
-
-        //TEST
-        corePanel.SetActive(false);
     }
 
     // Handles return button. If we connected to relay, disconnect
