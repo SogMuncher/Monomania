@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Unity.Netcode;
 using Unity.Services.Authentication;
+using Unity.VisualScripting;
+using UnityEngine.InputSystem;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -24,12 +26,16 @@ public class MainMenuUI : MonoBehaviour
     // UI elements for the first menu (joining/hosting init menu)
     [Header("Main Menu UI")]
     [SerializeField] private Button hostButton;
+    [SerializeField] private Button InitLobbyButton;
     [SerializeField] private Button joinButton;
     [SerializeField] private Button returnButton;
 
     [SerializeField] private GameObject joinSection;
+    [SerializeField] private GameObject HostSection;
     [SerializeField] private TMP_InputField joinCodeInput;
+    [SerializeField] private TMP_InputField PlayerNameInput;
     [SerializeField] private Button connectButton;
+   
 
     [SerializeField] private TMP_Text joinCodeLabel;
     [SerializeField] private TMP_Text statusLabel;
@@ -55,18 +61,11 @@ public class MainMenuUI : MonoBehaviour
     {
         // Set menu to active, make sure lobby is hidden
         // these should definitely exist, error otherwise
-        mainMenuPanel.SetActive(true);
-        lobbyPanel.SetActive(false);
-
-        // hide the player join ui in the main menu panel
-        joinSection.SetActive(false);
-        joinCodeLabel.text = "Join Code: —";
-        SetStatus("Status: Not connected");
-        // hide the return button. Should only be active when in lobby
-        returnButton.gameObject.SetActive(false);
+        ShowMainMenu();
 
         // Button listeners
         hostButton.onClick.AddListener(OnClickHost);
+        InitLobbyButton.onClick.AddListener(OnClickInitLobby);
         joinButton.onClick.AddListener(OnClickJoin);
         connectButton.onClick.AddListener(OnClickConnect);
         returnButton.onClick.AddListener(OnClickReturn);
@@ -93,15 +92,18 @@ public class MainMenuUI : MonoBehaviour
     //funtion activates the main menu portion of the US
     private void ShowMainMenu()
     {
-        ClearRows(); //clear the player list if it had data(previous connection)
-        lobbyPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
 
-        // Reset menu UI
+        ClearRows(); //clear the player list if it had data(previous connection)
+        lobbyPanel.SetActive(false);
+        returnButton.gameObject.SetActive(false);
         joinSection.SetActive(false);
+        HostSection.SetActive(false);
+        PlayerNameInput.gameObject.SetActive(false);
         joinCodeInput.text = "";
         joinCodeLabel.text = "Join Code: —";
-        returnButton.gameObject.SetActive(false);
+        PlayerNameInput.text = "";
+   
 
         hostButton.gameObject.SetActive(true);
         joinButton.gameObject.SetActive(true);
@@ -242,6 +244,8 @@ public class MainMenuUI : MonoBehaviour
         {
             relay.Shutdown();  
         }
+        UnbindSessionManager();
+        ClearRows();
         ShowMainMenu();
 
     }
@@ -257,24 +261,44 @@ public class MainMenuUI : MonoBehaviour
 
         if (hostButton) hostButton.gameObject.SetActive(false);
         if (joinButton) joinButton.gameObject.SetActive(false);
+
+        PlayerNameInput.gameObject.SetActive(true);
     }
     // Handles click host
-    private async void OnClickHost()
+    private void OnClickHost()
     {
         SetStatus("Status: Starting host…");
-        hostButton.interactable = false;
-        joinButton.interactable = false;
+        HostSection.SetActive(true);
+        hostButton.gameObject.SetActive(false);
+        joinButton.gameObject.SetActive(false);
+
+        PlayerNameInput.gameObject.SetActive(true);
+        InitLobbyButton.gameObject.SetActive(true);
+        returnButton.gameObject.SetActive(true);
+
+    }
+
+    private async void OnClickInitLobby()
+    {
+        if (PlayerNameInput.text == "")
+        {
+            SetStatus("Please enter a valid player name");
+            return;
+        }
 
         try
         {
             string joinCode = await relay.StartHostAsync(maxClients: 1);
+            if (sessionManager == null)
+            {
+                BindSessionManager();
+            }
+            sessionManager.RegisterPlayerRpc(PlayerNameInput.text);
 
             joinCodeLabel.text = $"Join Code: {joinCode}";
             SetStatus("Status: Hosting. Share the join code.");
 
             returnButton.gameObject.SetActive(true);
-
-            // Switch to lobby UI after network is started
             ShowLobby();
         }
         catch (Exception e)
@@ -284,21 +308,31 @@ public class MainMenuUI : MonoBehaviour
         }
 
 
+
     }
     // Handles when we click 'connect' after entering join code
     private async void OnClickConnect()
     {
 
         SetStatus("Status: Joining…");
+        //here we can also check if there should be any other prohibitions
+        if(PlayerNameInput.text == "")
+        {
+            SetStatus("Please enter a valid player name");
+            return;
+        }
 
         try
         {
             string code = joinCodeInput != null ? joinCodeInput.text : "";
+            
             await relay.StartClientAsync(code);
+            sessionManager.RegisterPlayerRpc(PlayerNameInput.text); 
 
             SetStatus("Status: Connected / joining completed.");
             returnButton.gameObject.SetActive(false);
             ShowLobby();
+
         }
         catch (Exception e)
         {
@@ -324,11 +358,14 @@ public class MainMenuUI : MonoBehaviour
     // When a client disconnects, either update status label or return to mainmenu
     private void OnClientDisconnected(ulong clientID)
     {
+        ulong hostId = NetworkManager.ServerClientId;
+
+
         var nm = NetworkManager.Singleton;
         if (nm == null) return;
 
-        // Someone else disconnected (host sees this). Stay in lobby.
-        if (clientID != nm.LocalClientId)
+        // Someone else disconnected, and not host. If the host disconnects everyone should be ejected
+        if (clientID != nm.LocalClientId && clientID != hostId)
         {
             SetStatus($"Status: Player {clientID} disconnected.");
             return;
@@ -340,6 +377,8 @@ public class MainMenuUI : MonoBehaviour
         ClearRows();
         ShowMainMenu();
     }
+
+
 
     private void SetStatus(string msg)
     {

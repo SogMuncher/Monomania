@@ -37,6 +37,9 @@ public class SessionManager : NetworkBehaviour
     public static SessionManager Instance { get; private set; }
     public NetworkList<PlayerData> Players { get; private set; }
 
+
+    public int BoardSize { get; private set; } = 5;
+
     private void Awake()
     {
         Instance = this;
@@ -76,11 +79,8 @@ public class SessionManager : NetworkBehaviour
     {
         if (IsServer)
         {
-            NetworkManager.OnClientConnectedCallback += OnClientConnected;
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
 
-            // Add host (server) immediately
-            AddPlayer(NetworkManager.ServerClientId);
         }
         Players.OnListChanged += change => Debug.Log($"Players changed: {Players.Count}");
     }
@@ -89,20 +89,47 @@ public class SessionManager : NetworkBehaviour
     {
         if (NetworkManager != null)
         {
-            NetworkManager.OnClientConnectedCallback -= OnClientConnected;
             NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+
+        }
+
+        if(IsServer && Players != null)
+        {
+            Players.Clear();
+        }
+        {
+
         }
 
         if (Instance == this) Instance = null;
     }
 
-    private void OnClientConnected(ulong clientId)
-    {
-        AddPlayer(clientId);
-    }
-
     private void OnClientDisconnected(ulong clientId)
     {
         RemovePlayer(clientId);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void RegisterPlayerRpc(string playerName, RpcParams rpcParams = default)
+    {
+        ulong senderId = rpcParams.Receive.SenderClientId;
+
+        if (!IsServer) return;
+
+        // prevent duplicates
+        for (int i = 0; i < Players.Count; i++)
+        {
+            if (Players[i].clientID == senderId)
+            {
+                var pd = Players[i];
+                pd.name = playerName;
+                Players[i] = pd;
+                return;
+            }
+        }
+
+        Players.Add(new PlayerData(senderId, playerName));
+
+        Debug.Log($"[Lobby] Registered player {senderId} name={playerName}");
     }
 }
