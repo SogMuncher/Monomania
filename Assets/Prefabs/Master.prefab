@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6847298880701178046}
   - component: {fileID: 5508440649949020430}
-  - component: {fileID: 3540339132752166148}
-  - component: {fileID: -5242348537437306666}
+  - component: {fileID: 6099962230691523259}
+  - component: {fileID: -2728377903157065858}
   m_Layer: 0
-  m_Name: Mass
+  m_Name: Master
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -93,8 +93,8 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!60 &3540339132752166148
-PolygonCollider2D:
+--- !u!58 &6099962230691523259
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -127,23 +127,9 @@ PolygonCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0, y: 0.5773587}
-      - {x: -0.5, y: -0.28866667}
-      - {x: 0.5, y: -0.28866667}
-  m_UseDelaunayMesh: 1
---- !u!114 &-5242348537437306666
+  m_Offset: {x: 0.0011092812, y: 0}
+  m_Radius: 0.4719294
+--- !u!114 &-2728377903157065858
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,6 +138,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7998816914017725020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfed55798a1f03242b13e6d476256d93, type: 3}
+  m_Script: {fileID: 11500000, guid: 8207aca84988c36408ee19b6f18401f7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mass
+  m_EditorClassIdentifier: '::'

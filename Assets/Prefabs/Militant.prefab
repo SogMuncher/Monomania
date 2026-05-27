@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 6847298880701178046}
   - component: {fileID: 5508440649949020430}
   - component: {fileID: 3540339132752166148}
-  - component: {fileID: -5242348537437306666}
+  - component: {fileID: -3423558609311154892}
   m_Layer: 0
-  m_Name: Mass
+  m_Name: Militant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 395f6b9556f14704790df6035be6ee3a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -130,8 +130,8 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
-    oldSize: {x: 1, y: 1}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.64, y: 0.64}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -143,7 +143,7 @@ PolygonCollider2D:
       - {x: -0.5, y: -0.28866667}
       - {x: 0.5, y: -0.28866667}
   m_UseDelaunayMesh: 1
---- !u!114 &-5242348537437306666
+--- !u!114 &-3423558609311154892
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,6 +152,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7998816914017725020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfed55798a1f03242b13e6d476256d93, type: 3}
+  m_Script: {fileID: 11500000, guid: 8fb989cb7573e8c4287bb3f4d31bb33d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Mass
+  m_EditorClassIdentifier: '::'

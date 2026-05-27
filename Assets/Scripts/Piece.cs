@@ -28,5 +28,15 @@ public abstract class Piece : MonoBehaviour
         isActive = active;
     }
 
+    protected virtual void OnMouseDown()
+    {
+        var moves = getValidMoves();
+        if (!isActive) { setActive(true); } // piece is made "active" when clicked
+
+        //further functionality can be implemented by children extending the base class function
+
+    }
+
+
 }
 
